@@ -4,6 +4,7 @@ import { Card } from './card';
 import { Button } from './button';
 import { Input } from './input';
 import { storage } from '@/lib/storage';
+import { TreeNode } from '../../types';
 
 interface SaveLoadDialogProps {
   onClose: () => void;
@@ -21,7 +22,7 @@ export function SaveLoadDialog({ onClose, onLoad, currentNodes }: SaveLoadDialog
     storage.saveCurrentTree({
       id: Date.now().toString(),
       name: treeName,
-      nodes: currentNodes,
+      nodes: currentNodes as TreeNode[],
       lastModified: Date.now()
     });
     onClose();

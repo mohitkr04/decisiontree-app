@@ -7,29 +7,8 @@ import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { Separator } from '../components/ui/separator';
 
-type ContentItem = {
-  type: 'video' | 'text';
-  title: string;
-  url?: string;
-  content?: string;
-};
 
-type Section = {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  videoUrl?: string;
-  progress: number;
-  status: 'available' | 'locked';
-  content: ContentItem[];
-};
 
-type LearningLevel = {
-  id: number;
-  level: string;
-  sections: Section[];
-};
 
 const learningLevels = [
   {
@@ -41,6 +20,8 @@ const learningLevels = [
         title: "What is a Decision Tree?",
         description: "Learn the basics of decision trees and how they work",
         duration: "10 mins",
+        progress: 0,
+        status: "available",
         content: [
           {
             type: "text",
@@ -219,7 +200,7 @@ export default function Learn() {
                                       src={item.url}
                                       title={item.title}
                                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                      allowFullScreen
+                                      allowFullScreen={true}
                                     />
                                   </div>
                                 </div>

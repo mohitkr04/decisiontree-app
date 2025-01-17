@@ -1,8 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
 import { TreeNode } from '@/types';
 import { DraggableNode } from './draggable-node';
-import { TreeConnection } from './tree-connection';
 import { useToast } from './use-toast';
 
 interface TreeCanvasProps {
@@ -10,8 +8,9 @@ interface TreeCanvasProps {
   selectedNode: TreeNode | null;
   onNodeDrag: (id: string, position: { x: number; y: number }) => void;
   onNodeSelect: (node: TreeNode) => void;
-  onNodeConnect: (sourceId: string, targetId: string, isYesPath: boolean) => void;
-  onNodeDisconnect?: (nodeId: string, isYesPath: boolean) => void;
+  onNodeDelete: (node: TreeNode) => void;
+  onNodeConnect: (sourceId: string, isYesPath: boolean) => void;
+  onNodeDisconnect: (sourceId: string, isYesPath: boolean) => void;
 }
 
 export function TreeCanvas({
@@ -20,7 +19,6 @@ export function TreeCanvas({
   onNodeDrag,
   onNodeSelect,
   onNodeConnect,
-  onNodeDisconnect
 }: TreeCanvasProps) {
   const { toast } = useToast();
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -101,7 +99,7 @@ export function TreeCanvas({
       return;
     }
     
-    onNodeConnect(connectingFrom.nodeId, targetId, connectingFrom.isYesPath);
+    onNodeConnect(connectingFrom.nodeId, connectingFrom.isYesPath);
     setConnectingFrom(null);
   }, [connectingFrom, nodes, onNodeConnect, toast]);
 
@@ -135,8 +133,8 @@ export function TreeCanvas({
         {nodes.map(node => {
           if (node.type !== 'question') return null;
           
-          const yesNode = nodes.find(n => n.id === node.yesNodeId);
-          const noNode = nodes.find(n => n.id === node.noNodeId);
+          const yesNode = nodes.find(n => n.id === node.yesConnection);
+          const noNode = nodes.find(n => n.id === node.noConnection);
           
           return (
             <g key={node.id}>

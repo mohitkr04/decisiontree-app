@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { Toaster } from '@/components/ui/toast';
+import { Toast } from '@/components/ui/toast';
 
 const ToastContext = createContext<ReturnType<typeof useToast> | null>(null);
 
@@ -10,7 +10,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={toast}>
       {children}
-      <Toaster />
+      <Toast />
     </ToastContext.Provider>
   );
 }

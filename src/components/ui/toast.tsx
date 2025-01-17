@@ -1,35 +1,36 @@
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useToast } from './use-toast';
+import { useToastStore } from './use-toast';
 
 export function Toast() {
-  const { toast, message, type, show, dismiss } = useToast();
+  const { toasts, removeToast } = useToastStore();
 
-  if (!show) return null;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (toasts.length > 0) {
+        removeToast(toasts[0].id);
+      }
+    }, 3000);
 
-  const bgColor = type === 'success' ? 'bg-green-500' :
-                 type === 'error' ? 'bg-red-500' :
-                 'bg-blue-500';
-
-  const icon = type === 'success' ? '✅' :
-              type === 'error' ? '❌' :
-              'ℹ️';
+    return () => clearTimeout(timer);
+  }, [toasts, removeToast]);
 
   return (
     <AnimatePresence>
-      {show && (
+      {toasts.map((toast) => (
         <motion.div
+          key={toast.id}
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          className={`${bgColor} text-white px-6 py-3 rounded-lg shadow-lg`}
-          onClick={dismiss}
+          exit={{ opacity: 0, y: -50 }}
+          className={`fixed bottom-4 right-4 p-4 rounded-lg shadow-lg ${
+            toast.variant === 'destructive' ? 'bg-red-500' : 'bg-green-500'
+          } text-white`}
         >
-          <div className="flex items-center gap-2">
-            <span>{icon}</span>
-            <span>{message}</span>
-          </div>
+          <h3 className="font-semibold">{toast.title}</h3>
+          <p className="text-sm">{toast.description}</p>
         </motion.div>
-      )}
+      ))}
     </AnimatePresence>
   );
 }

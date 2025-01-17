@@ -1,15 +1,13 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-
-type FeedbackType = 'success' | 'error' | 'warning';
+import { motion } from 'framer-motion';
 
 interface FeedbackProps {
   message: string;
-  type: 'success' | 'error' | 'info';
-  onClose?: () => void;
+  type: 'error' | 'info' | 'success';
+  visible: boolean;
+  onClose: () => void;
 }
 
-export function Feedback({ message, type }: { message: string, type: 'success' | 'info' | 'error' }) {
+export function Feedback({ message, type }: FeedbackProps) {
   const icons = {
     success: '🌟',
     info: '💡',

@@ -10,7 +10,6 @@ import { NodePalette } from '../components/ui/node-palette';
 import { InteractiveTutorial } from '../components/ui/interactive-tutorial';
 import { NodeEditor } from '../components/ui/node-editor';
 import { TreeCanvas } from '../components/ui/tree-canvas';
-import { DecisionTreeExample, decisionTreeExamples } from '../data/decisionTrees';
 import { TreeNode, NodeType } from '../types';
 
 interface HistoryState {
@@ -30,7 +29,6 @@ export default function BuildTree() {
   const [showTutorial, setShowTutorial] = useState(true);
   const [showHint, setShowHint] = useState(false);
   const [hintText, setHintText] = useState('');
-  const [selectedTemplate, setSelectedTemplate] = useState<DecisionTreeExample | null>(null);
   const [history, setHistory] = useState<HistoryState[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
@@ -99,23 +97,6 @@ export default function BuildTree() {
       setBuildStep(prev => Math.max(prev, 3));
     }
   }, [toast, setBuildStep]);
-
-  // Template handling
-  const handleTemplateSelect = useCallback((template: DecisionTreeExample) => {
-    setSelectedTemplate(template);
-    setNodes(template.nodes);
-    setBuildStep(1);
-    saveToHistory({
-      nodes: template.nodes,
-      selectedNode: null,
-      buildStep: 1
-    });
-    toast({
-      title: `Starting ${template.title}`,
-      description: "Let's build this decision tree together!",
-    });
-  }, [toast, saveToHistory]);
-
   // Node deletion
   const handleNodeDelete = useCallback((node: TreeNode) => {
     setNodes(prev => {
@@ -161,7 +142,9 @@ export default function BuildTree() {
       position: {
         x: questionNode.position.x + (isYesPath ? 150 : -150),
         y: questionNode.position.y + 150
-      }
+      },
+      hint: undefined,
+      question: ''
     };
 
     setNodes(prev => [
@@ -189,68 +172,7 @@ export default function BuildTree() {
     }
   }, []);
 
-  const validateTree = useCallback(() => {
-    // Check if all question nodes have both yes and no connections
-    const invalidNodes = nodes.filter(node => 
-      node.type === 'question' && (!node.yesConnection || !node.noConnection)
-    );
-
-    if (invalidNodes.length > 0) {
-      toast({
-        title: "Oops! 🤔",
-        description: "Some questions don't have both Yes and No paths!",
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    // Check if there are no circular references
-    const visited = new Set<string>();
-    const checkCircular = (nodeId: string): boolean => {
-      if (visited.has(nodeId)) return true;
-      visited.add(nodeId);
-      
-      const node = nodes.find(n => n.id === nodeId);
-      if (!node) return false;
-
-      if (node.yesConnection && checkCircular(node.yesConnection)) return true;
-      if (node.noConnection && checkCircular(node.noConnection)) return true;
-
-      visited.delete(nodeId);
-      return false;
-    };
-
-    const hasCircular = nodes.some(node => checkCircular(node.id));
-    if (hasCircular) {
-      toast({
-        title: "Oops! 🔄",
-        description: "Found a loop in the decision tree!",
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    return true;
-  }, [nodes, toast]);
-
-  const handleNodeEdit = useCallback((nodeId: string, content: string) => {
-    setNodes(prev => {
-      const updatedNodes = prev.map(node =>
-        node.id === nodeId ? { ...node, content } : node
-      );
-      saveToHistory({
-        nodes: updatedNodes,
-        selectedNode,
-        buildStep
-      });
-      return updatedNodes;
-    });
-
-    toast({
-      title: "Updated! ✏️",
-      description: "Your changes have been saved"
-    });
-  }, [selectedNode, buildStep, saveToHistory, toast]);
+  
 
   const handleNodeDisconnect = useCallback((sourceId: string, isYesPath: boolean) => {
     setNodes(prev => {
@@ -283,6 +205,8 @@ export default function BuildTree() {
       type,
       content: '',
       position: { x: 200, y: 200 },
+      hint: '',
+      question: '',
     };
 
     setNodes(prev => [...prev, newNode]);
@@ -302,10 +226,6 @@ export default function BuildTree() {
     }
   }, [toast]);
 
-  const handleNodeConnect = (sourceId: string, targetId: string, isYesPath: boolean) => {
-    // Implementation
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 pt-24">
@@ -320,7 +240,7 @@ export default function BuildTree() {
             <div>
               <h1 className="text-4xl font-bold">Build Your Decision Tree</h1>
               <p className="text-muted-foreground mt-2">
-                {selectedTemplate ? selectedTemplate.title : "Choose a template to start"}
+                Create your own decision tree
               </p>
             </div>
             <div className="flex gap-2">
@@ -379,7 +299,9 @@ export default function BuildTree() {
                 onNodeDrag={handleNodeDrop}
                 onNodeSelect={handleNodeSelect}
                 onNodeDelete={handleNodeDelete}
-                onNodeConnect={handleYesNoClick}
+                onNodeConnect={(sourceId, isYesPath) => {
+                  handleYesNoClick(sourceId, isYesPath);
+                }}
                 onNodeDisconnect={handleNodeDisconnect}
               />
             </div>
@@ -403,6 +325,7 @@ export default function BuildTree() {
           {showHint && (
             <Hint
               text={hintText}
+              visible={showHint}
               onClose={() => setShowHint(false)}
             />
           )}

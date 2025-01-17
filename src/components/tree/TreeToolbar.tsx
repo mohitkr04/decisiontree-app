@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface TreeToolbarProps {
@@ -6,8 +5,6 @@ interface TreeToolbarProps {
 }
 
 export default function TreeToolbar({ onAddNode }: TreeToolbarProps) {
-  const [nodeText, setNodeText] = useState('');
-
   const tools = [
     { name: 'Decision', icon: '🤔' },
     { name: 'Outcome', icon: '🎯' },

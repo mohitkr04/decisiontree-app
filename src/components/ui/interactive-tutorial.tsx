@@ -1,37 +1,7 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from './button';
-import { Card } from './card';
 
-interface TutorialStep {
-  title: string;
-  content: string;
-  image?: string;
-  action?: string;
-}
-
-const tutorialSteps: TutorialStep[] = [
-  {
-    title: "Welcome to Decision Tree Builder!",
-    content: "Learn how to create decision trees by answering simple yes/no questions.",
-    action: "Next"
-  },
-  {
-    title: "Start with a Question",
-    content: "Drag a Question Node from the palette to start building your tree.",
-    action: "Got it"
-  },
-  {
-    title: "Connect Your Nodes",
-    content: "Use the Yes/No buttons to connect nodes and create paths.",
-    action: "Continue"
-  },
-  {
-    title: "Add Results",
-    content: "Add Result Nodes to show the final classifications.",
-    action: "Let's Start!"
-  }
-];
 
 interface InteractiveTutorialProps {
   onClose: () => void;

@@ -1,3 +1,5 @@
+import { TreeNode } from "@/types";
+
 export const validateTreeStructure = (nodes: TreeNode[]) => {
   // Check for root node
   const rootNode = nodes.find(node => node.isRoot);

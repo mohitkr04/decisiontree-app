@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface ShareTreeProps {
   treeData: any;
@@ -12,6 +12,7 @@ interface ShareTreeProps {
 export default function ShareTree({ treeData, treeName }: ShareTreeProps) {
   const [showShare, setShowShare] = useState(false);
   const [shareLink, setShareLink] = useState('');
+  const { toast } = useToast();
 
   const handleShare = async () => {
     // Generate a unique share ID

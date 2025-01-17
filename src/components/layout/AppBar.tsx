@@ -1,7 +1,5 @@
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logout } from '../../store/authSlice';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { UserNav } from './UserNav';
@@ -9,7 +7,6 @@ import { UserNav } from './UserNav';
 export default function AppBar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
 
   const menuItems = [
     { label: 'Learn', path: '/learn', icon: '📚' },

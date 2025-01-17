@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface Exercise {
   id: string;
@@ -53,6 +53,7 @@ const exercises: Exercise[] = [
 ];
 
 export default function InteractiveExercises() {
+  const { toast } = useToast();
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
   const [userAnswers, setUserAnswers] = useState<boolean[]>([]);
   const [completed, setCompleted] = useState<string[]>([]);

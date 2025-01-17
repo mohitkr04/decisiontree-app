@@ -2,10 +2,11 @@ import { motion } from 'framer-motion';
 import { TreeNode } from '@/types';
 
 interface DraggableNodeProps {
+  key: string;
   node: TreeNode;
   onDragEnd: (id: string, position: { x: number; y: number }) => void;
   onClick: () => void;
-  isSelected?: boolean;
+  isSelected: boolean;
   onConnectionStart: (isYesPath: boolean) => void;
   onConnectionEnd: () => void;
 }
@@ -15,8 +16,7 @@ export function DraggableNode({
   onDragEnd,
   onClick,
   isSelected,
-  onConnectionStart,
-  onConnectionEnd
+  onConnectionStart
 }: DraggableNodeProps) {
   const isQuestion = node.type === 'question';
   const hasContent = Boolean(node.content);

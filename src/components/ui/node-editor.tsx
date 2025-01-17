@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card } from './card';
-import { Input } from './input';
 import { Button } from './button';
-import { Textarea } from './textarea';
 import { TreeNode } from '@/types';
 import { useToast } from './use-toast';
 

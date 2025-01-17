@@ -63,9 +63,18 @@ export const CardStack = ({
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
             onDragStart={() => setIsDragging(true)}
-            onDragEnd={(e, info) => {
+            onDragEnd={(event) => {
               setIsDragging(false);
-              if (Math.abs(info.offset.y) > 100) {
+              let offsetY = 0;
+
+              // Check if the event is a MouseEvent
+              if (event instanceof MouseEvent) {
+                offsetY = event.offsetY; // Use offsetY for MouseEvent
+              } else if (event instanceof PointerEvent) {
+                offsetY = event.clientY; // Use clientY for PointerEvent
+              }
+
+              if (Math.abs(offsetY) > 100) {
                 const newCards = [...cards];
                 newCards.push(newCards.shift()!);
                 setCards(newCards);

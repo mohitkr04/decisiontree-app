@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { Toast } from './Toast';
+import { Toast } from './toast';
 import { useToastStore } from './use-toast';
 
 const ToastContext = createContext<ReturnType<typeof useToastStore> | undefined>(undefined);

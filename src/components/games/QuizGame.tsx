@@ -478,10 +478,9 @@ export default function QuizGame() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
-  const [startTime, setStartTime] = useState<number | null>(null);
   const [questionStartTime, setQuestionStartTime] = useState<number | null>(null);
-  const [timeTaken, setTimeTaken] = useState<number[]>([]);
   const [answers, setAnswers] = useState<boolean[]>([]);
+  const [timeTaken, setTimeTaken] = useState<number[]>([]);
   const { toast } = useToast();
 
   const formatTime = (ms: number) => {
@@ -493,7 +492,6 @@ export default function QuizGame() {
 
   const handleQuizSelect = (quiz: Quiz) => {
     setActiveQuiz(quiz);
-    setStartTime(Date.now());
     setQuestionStartTime(Date.now());
   };
 
@@ -536,35 +534,15 @@ export default function QuizGame() {
     if (currentQuestion < activeQuiz!.questions.length - 1) {
       setCurrentQuestion(c => c + 1);
     } else {
-      const totalTime = Date.now() - (startTime || Date.now());
-      const avgTimePerQuestion = timeTaken.reduce((a, b) => a + b, 0) / timeTaken.length;
-      
       toast({
-        title: "🎓 Quiz Completed!",
-        description: (
-          <div className="space-y-2">
-            <div className="text-lg font-bold">
-              Final Score: {score}/{activeQuiz!.questions.length}
-            </div>
-            <div className="text-sm">
-              ✅ Correct: {answers.filter(a => a).length}
-              <br />
-              ❌ Wrong: {answers.filter(a => !a).length}
-            </div>
-            <div className="text-sm">
-              ⏱️ Total time: {formatTime(totalTime)}
-              <br />
-              📊 Avg time/question: {formatTime(avgTimePerQuestion)}
-            </div>
-          </div>
-        ),
-        duration: 5000,
+        title: "Success",
+        description: "Quiz completed successfully",
+        variant: "default"
       });
       
       setActiveQuiz(null);
       setCurrentQuestion(0);
       setScore(0);
-      setStartTime(null);
       setQuestionStartTime(null);
       setTimeTaken([]);
       setAnswers([]);
@@ -713,4 +691,4 @@ export default function QuizGame() {
       </AnimatePresence>
     </motion.div>
   );
-} 
+}

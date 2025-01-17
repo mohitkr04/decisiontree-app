@@ -1,23 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import confetti from 'canvas-confetti';
-import { TreeNode, DecisionNode } from '@/types';
-
-const initialTree: DecisionNode = {
-  id: 'root',
-  type: 'decision',
-  question: "Is it raining?",
-  yesNode: { 
-    id: 'yes',
-    type: 'outcome',
-    outcome: "Take the umbrella and go out!" 
-  },
-  noNode: { 
-    id: 'no',
-    type: 'outcome',
-    outcome: "Better stay inside!" 
-  }
-};
+import { DecisionNode } from '../../types/index';
 
 export default function InteractiveTreeBuilder() {
   const [currentNode, setCurrentNode] = useState<DecisionNode>({

@@ -25,11 +25,17 @@ export const useToastStore = create<ToastStore>((set) => ({
     })),
 }));
 
+export interface ToastProps {
+  title: string;
+  description: string;
+  variant?: 'default' | 'destructive';
+}
+
 export const useToast = () => {
-  const addToast = useToastStore((state) => state.addToast);
-  return {
-    toast: (options: { title: string; description: string; variant?: 'default' | 'destructive' }) => {
-      addToast(options);
-    },
+  const toast = (options: ToastProps) => {
+    // Implement your toast logic here
+    console.log('Toast:', options);
   };
+  
+  return { toast };
 };

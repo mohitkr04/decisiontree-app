@@ -4,6 +4,7 @@ import { Lightbulb } from 'lucide-react';
 interface HintProps {
   text: string;
   visible: boolean;
+  onClose: () => void;
 }
 
 export function Hint({ text, visible }: HintProps) {

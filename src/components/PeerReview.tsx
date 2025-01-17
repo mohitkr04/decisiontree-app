@@ -3,14 +3,15 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface PeerReviewProps {
   treeData: any;
   studentName: string;
 }
 
-export default function PeerReview({ treeData, studentName }: PeerReviewProps) {
+export default function PeerReview({ studentName }: PeerReviewProps) {
+  const { toast } = useToast();
   const [feedback, setFeedback] = useState('');
   const [rating, setRating] = useState(0);
 
@@ -23,15 +24,6 @@ export default function PeerReview({ treeData, studentName }: PeerReviewProps) {
       });
       return;
     }
-
-    // In a real app, you'd save this to a database
-    const reviewData = {
-      treeId: treeData.id,
-      reviewer: "Current Student",
-      feedback,
-      rating,
-      timestamp: new Date().toISOString()
-    };
 
     toast({
       title: "Review Submitted! 🌟",

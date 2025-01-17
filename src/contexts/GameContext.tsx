@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import confetti from 'canvas-confetti';
+import { useToast } from '../components/ui/use-toast';
 
 interface GameContextType {
   score: number;
@@ -13,6 +14,7 @@ interface GameContextType {
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
+  const { toast } = useToast();
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [achievements, setAchievements] = useState<string[]>([]);
@@ -41,7 +43,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     toast({
       title: "🏆 Achievement Unlocked!",
       description: achievement,
-      duration: 3000
+      variant: "default"
     });
   }, []);
 

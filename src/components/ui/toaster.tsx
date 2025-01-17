@@ -1,4 +1,4 @@
-import { Toast } from './Toast';
+import { Toast } from './toast';
 
 export function Toaster() {
   return (

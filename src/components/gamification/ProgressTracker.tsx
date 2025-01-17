@@ -1,3 +1,4 @@
+import { Badge } from '../../types/index';
 import { motion } from 'framer-motion';
 
 export interface Progress {
