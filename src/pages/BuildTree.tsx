@@ -183,17 +183,9 @@ export default function BuildTree() {
   }, [nodes, toast]);
 
   const handleNodeSelect = useCallback((node: TreeNode) => {
-    if (node.type === 'question') {
-      setSelectedNode(node);
-      if (!node.content) {
-        setShowNodeEditor(true);
-      }
-    } else {
-      // Prevent direct answer node selection/editing
-      toast({
-        title: "ℹ️ Answer Node",
-        description: "Answers can only be added through YES/NO buttons",
-      });
+    setSelectedNode(node);
+    if (!node.content) {
+      setShowNodeEditor(true);
     }
   }, []);
 
@@ -286,26 +278,26 @@ export default function BuildTree() {
 
   // Handle adding a new node from the palette
   const handleAddNode = useCallback((type: NodeType) => {
+    const newNode: TreeNode = {
+      id: `node-${Date.now()}`,
+      type,
+      content: '',
+      position: { x: 200, y: 200 },
+    };
+
+    setNodes(prev => [...prev, newNode]);
+    setSelectedNode(newNode);
+    setShowNodeEditor(true);
+
     if (type === 'question') {
-      const newNode: TreeNode = {
-        id: `node-${Date.now()}`,
-        type: 'question',
-        content: '',
-        position: { x: 200, y: 200 },
-      };
-      setNodes(prev => [...prev, newNode]);
-      setSelectedNode(newNode);
-      setShowNodeEditor(true);
       toast({
         title: "🤔 New Question",
         description: "Type your yes/no question",
       });
     } else {
-      // Prevent direct answer creation from palette
       toast({
-        title: "❌ Cannot Add Answer Directly",
-        description: "Use YES/NO buttons on question nodes to add answers",
-        variant: "destructive"
+        title: "🎯 New Answer",
+        description: "Type your answer",
       });
     }
   }, [toast]);
