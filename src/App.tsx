@@ -6,11 +6,11 @@ import ErrorBoundary from './components/ErrorBoundary';
 // Page imports
 import Landing from './pages/Landing';
 import Home from './pages/Home';
+import About from './pages/About';
 import Learn from './pages/Learn';
 import BuildTree from './pages/BuildTree';
 import Examples from './pages/Examples';
 import Games from './pages/Games';
-import About from './pages/About';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
@@ -21,11 +21,11 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<Home />} />
+            <Route path="/about" element={<About />} />
             <Route path="/learn" element={<Learn />} />
             <Route path="/build-tree" element={<BuildTree />} />
             <Route path="/examples" element={<Examples />} />
             <Route path="/games" element={<Games />} />
-            <Route path="/about" element={<About />} />
           </Route>
         </Routes>
         <Toaster />

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useToast } from '../ui/use-toast';
 import confetti from 'canvas-confetti';
+import { Button } from '@/components/ui/button';
 
 type Position = {
   x: number;
