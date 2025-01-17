@@ -1,24 +1,35 @@
 import { create } from 'zustand';
 
-interface ToastState {
-  message: string;
-  type: 'success' | 'error' | 'info';
-  show: boolean;
-  toast: (options: { title: string; description: string; variant?: 'default' | 'destructive' }) => void;
-  dismiss: () => void;
+interface Toast {
+  id: string;
+  title: string;
+  description: string;
+  variant?: 'default' | 'destructive';
 }
 
-export const useToast = create<ToastState>((set) => ({
-  message: '',
-  type: 'info',
-  show: false,
-  toast: (options) => {
-    const message = options.title + (options.description ? `: ${options.description}` : '');
-    const type = options.variant === 'destructive' ? 'error' : 'success';
-    set({ message, type, show: true });
-    setTimeout(() => {
-      set({ show: false });
-    }, 3000);
-  },
-  dismiss: () => set({ show: false }),
+interface ToastStore {
+  toasts: Toast[];
+  addToast: (toast: Omit<Toast, 'id'>) => void;
+  removeToast: (id: string) => void;
+}
+
+export const useToastStore = create<ToastStore>((set) => ({
+  toasts: [],
+  addToast: (toast) =>
+    set((state) => ({
+      toasts: [...state.toasts, { ...toast, id: Math.random().toString() }],
+    })),
+  removeToast: (id) =>
+    set((state) => ({
+      toasts: state.toasts.filter((t) => t.id !== id),
+    })),
 }));
+
+export const useToast = () => {
+  const addToast = useToastStore((state) => state.addToast);
+  return {
+    toast: (options: { title: string; description: string; variant?: 'default' | 'destructive' }) => {
+      addToast(options);
+    },
+  };
+};

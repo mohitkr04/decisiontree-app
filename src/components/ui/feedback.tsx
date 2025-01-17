@@ -4,10 +4,9 @@ import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 type FeedbackType = 'success' | 'error' | 'warning';
 
 interface FeedbackProps {
-  type: FeedbackType;
   message: string;
-  visible: boolean;
-  onClose: () => void;
+  type: 'success' | 'error' | 'info';
+  onClose?: () => void;
 }
 
 export function Feedback({ message, type }: { message: string, type: 'success' | 'info' | 'error' }) {

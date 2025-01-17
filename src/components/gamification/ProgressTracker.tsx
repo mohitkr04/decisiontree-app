@@ -1,17 +1,10 @@
 import { motion } from 'framer-motion';
 
-interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  earned: boolean;
-}
-
-interface Progress {
-  treesCompleted: number;
-  challengesCompleted: number;
-  badges: Badge[];
+export interface Progress {
+  currentLevel: number;
+  totalLevels: number;
+  currentScore: number;
+  achievements: string[];
 }
 
 export default function ProgressTracker() {

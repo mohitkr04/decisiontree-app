@@ -11,7 +11,7 @@ import { InteractiveTutorial } from '../components/ui/interactive-tutorial';
 import { NodeEditor } from '../components/ui/node-editor';
 import { TreeCanvas } from '../components/ui/tree-canvas';
 import { DecisionTreeExample, decisionTreeExamples } from '../data/decisionTrees';
-import { TreeNode } from '@/types';
+import { TreeNode, NodeType } from '../types';
 
 interface HistoryState {
   nodes: TreeNode[];
@@ -301,6 +301,10 @@ export default function BuildTree() {
       });
     }
   }, [toast]);
+
+  const handleNodeConnect = (sourceId: string, targetId: string, isYesPath: boolean) => {
+    // Implementation
+  };
 
   return (
     <div className="min-h-screen bg-background">

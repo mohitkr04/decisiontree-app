@@ -6,4 +6,6 @@ export interface TreeNode {
   yesConnection?: string;
   noConnection?: string;
   isRoot?: boolean;
-} 
+}
+
+export type NodeType = 'question' | 'answer'; 

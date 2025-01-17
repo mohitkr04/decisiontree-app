@@ -11,7 +11,7 @@ interface TreeCanvasProps {
   onNodeDrag: (id: string, position: { x: number; y: number }) => void;
   onNodeSelect: (node: TreeNode) => void;
   onNodeConnect: (sourceId: string, targetId: string, isYesPath: boolean) => void;
-  onNodeDisconnect: (sourceId: string, isYesPath: boolean) => void;
+  onNodeDisconnect?: (nodeId: string, isYesPath: boolean) => void;
 }
 
 export function TreeCanvas({

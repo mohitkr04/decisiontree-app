@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from './components/ui/toaster';
-import ErrorBoundary from './components/ErrorBoundary';
-
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { ToastContainer } from 'react-toastify';
 // Page imports
 import Landing from './pages/Landing';
 import Home from './pages/Home';

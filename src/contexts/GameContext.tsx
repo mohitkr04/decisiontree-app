@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import confetti from 'canvas-confetti';
 
 interface GameContextType {
   score: number;
