@@ -19,14 +19,23 @@ export function DraggableNode({
   onConnectionEnd
 }: DraggableNodeProps) {
   const isQuestion = node.type === 'question';
+  const hasContent = Boolean(node.content);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Only trigger onClick if this is the correct type of node
+    if ((isQuestion && !hasContent) || (!isQuestion && !hasContent)) {
+      onClick();
+    }
+  };
 
   return (
     <motion.div
       id={`node-${node.id}`}
       drag
       dragMomentum={false}
-      whileHover={{ scale: 1.05 }}
-      whileDrag={{ scale: 1.1 }}
+      whileHover={{ scale: 1.02 }}
+      whileDrag={{ scale: 1.05 }}
       initial={{ x: node.position?.x || 0, y: node.position?.y || 0 }}
       animate={{
         x: node.position?.x || 0,
@@ -38,58 +47,76 @@ export function DraggableNode({
           y: (node.position?.y || 0) + info.offset.y
         });
       }}
-      onClick={onClick}
+      onClick={handleClick}
       className={`absolute cursor-pointer ${
         isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : ''
       } ${
         isQuestion 
-          ? 'bg-gradient-to-br from-blue-50 to-blue-100' 
-          : 'bg-gradient-to-br from-green-50 to-green-100'
-      } rounded-xl shadow-lg p-6 min-w-[250px] max-w-[300px] transition-all duration-200`}
+          ? 'bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200' 
+          : 'bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200'
+      } rounded-lg shadow-sm p-4 min-w-[180px] max-w-[220px] transition-all duration-200`}
     >
-      <div className="flex flex-col items-center gap-3">
-        <div className="text-3xl">
-          {isQuestion ? '🤔' : '🎯'}
-        </div>
-        
-        <div className="w-full text-center">
-          <p className="font-medium text-gray-800 break-words mb-3">
-            {node.content || (isQuestion ? 'Click to add question' : 'Click to add answer')}
-          </p>
-        </div>
-
+      <div className="flex flex-col items-center gap-2">
+        {/* Question Node Content */}
         {isQuestion && (
-          <div className="flex gap-3 mt-2">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm font-medium shadow-md"
-              onClick={(e) => {
-                e.stopPropagation();
-                onConnectionStart(true);
-              }}
-            >
-              Yes! 👍
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-sm font-medium shadow-md"
-              onClick={(e) => {
-                e.stopPropagation();
-                onConnectionStart(false);
-              }}
-            >
-              No! 👎
-            </motion.button>
-          </div>
+          <>
+            <div className="text-2xl">
+              {hasContent ? '🤔' : '❓'}
+            </div>
+            <div className="w-full text-center">
+              <p className="font-medium text-sm text-gray-800 break-words">
+                {hasContent ? node.content : 'Add Question'}
+              </p>
+            </div>
+            {isSelected && hasContent && (
+              <div className="flex gap-2 mt-1">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-full text-xs font-medium shadow-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onConnectionStart(true);
+                  }}
+                >
+                  Yes 👍
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-medium shadow-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onConnectionStart(false);
+                  }}
+                >
+                  No 👎
+                </motion.button>
+              </div>
+            )}
+          </>
         )}
 
-        {isSelected && (
+        {/* Answer Node Content */}
+        {!isQuestion && (
+          <>
+            <div className="text-2xl">
+              {hasContent ? '🎯' : '✨'}
+            </div>
+            <div className="w-full text-center">
+              <p className="font-medium text-sm text-gray-800 break-words">
+                {hasContent ? node.content : 'Add Answer'}
+              </p>
+            </div>
+          </>
+        )}
+
+        {/* Edit indicator for empty nodes */}
+        {isSelected && !hasContent && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute -top-2 -right-2 bg-blue-500 text-white p-1 rounded-full"
+            className="absolute -top-1 -right-1 bg-blue-500 text-white p-1 rounded-full text-xs"
           >
             ✏️
           </motion.div>

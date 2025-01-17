@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ToastProvider } from './components/ui/ToastProvider';
+import { Toaster } from './components/ui/toaster';
 import ErrorBoundary from './components/ErrorBoundary';
 
 // Page imports
@@ -16,21 +16,20 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 function App() {
   return (
     <ErrorBoundary>
-      <ToastProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path="/home" element={<Home />} />
-              <Route path="/learn" element={<Learn />} />
-              <Route path="/build-tree" element={<BuildTree />} />
-              <Route path="/examples" element={<Examples />} />
-              <Route path="/games" element={<Games />} />
-              <Route path="/about" element={<About />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </ToastProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/learn" element={<Learn />} />
+            <Route path="/build-tree" element={<BuildTree />} />
+            <Route path="/examples" element={<Examples />} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/about" element={<About />} />
+          </Route>
+        </Routes>
+        <Toaster />
+      </BrowserRouter>
     </ErrorBoundary>
   );
 }

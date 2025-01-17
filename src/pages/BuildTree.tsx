@@ -79,23 +79,26 @@ export default function BuildTree() {
   }, [selectedNode, buildStep, saveToHistory]);
 
   const handleNodeUpdate = useCallback((updatedNode: TreeNode) => {
-    setNodes(prev => {
-      const newNodes = prev.map(node => 
-        node.id === updatedNode.id ? updatedNode : node
-      );
-      saveToHistory({
-        nodes: newNodes,
-        selectedNode: updatedNode,
-        buildStep
-      });
-      return newNodes;
-    });
+    setNodes(prev => prev.map(node => 
+      node.id === updatedNode.id ? updatedNode : node
+    ));
+    setSelectedNode(null);
+    setShowNodeEditor(false);
 
-    toast({
-      title: "Node Updated",
-      description: "Your changes have been saved successfully!",
-    });
-  }, [toast, buildStep, saveToHistory]);
+    if (updatedNode.type === 'question') {
+      toast({
+        title: "🤔 Question Ready",
+        description: "Use YES/NO buttons to add possible answers",
+      });
+      setBuildStep(prev => Math.max(prev, 2));
+    } else {
+      toast({
+        title: "✅ Answer Added",
+        description: updatedNode.content,
+      });
+      setBuildStep(prev => Math.max(prev, 3));
+    }
+  }, [toast, setBuildStep]);
 
   // Template handling
   const handleTemplateSelect = useCallback((template: DecisionTreeExample) => {
@@ -140,62 +143,59 @@ export default function BuildTree() {
   }, [nodes.length, buildStep]);
 
   // Node connection and disconnection handlers
-  const handleNodeConnect = useCallback((sourceId: string, targetId: string, isYesPath: boolean) => {
-    setNodes(prev => {
-      const updatedNodes = prev.map(node => {
-        if (node.id === sourceId) {
-          // Only allow connections from question nodes to either type
-          if (node.type === 'question') {
-            return {
-              ...node,
-              [isYesPath ? 'yesConnection' : 'noConnection']: targetId
-            };
-          }
-        }
-        return node;
-      });
-
-      // Save to history and show feedback
-      saveToHistory({
-        nodes: updatedNodes,
-        selectedNode,
-        buildStep
-      });
-
+  const handleYesNoClick = useCallback((questionNodeId: string, isYesPath: boolean) => {
+    const questionNode = nodes.find(n => n.id === questionNodeId);
+    if (!questionNode?.content) {
       toast({
-        title: "Connected! 🎉",
-        description: `Created a ${isYesPath ? 'Yes' : 'No'} path!`
+        title: "❌ Invalid Action",
+        description: "Please add a question first",
+        variant: "destructive"
       });
+      return;
+    }
 
-      return updatedNodes;
-    });
-  }, [selectedNode, buildStep, saveToHistory, toast]);
-
-  const handleNodeAdd = useCallback((type: 'question' | 'answer', position: { x: number; y: number }) => {
-    const newNode: TreeNode = {
+    const newAnswer: TreeNode = {
       id: `node-${Date.now()}`,
-      type,
-      content: type === 'question' ? 'New Question?' : 'Answer',
-      position,
+      type: 'answer',
+      content: '',
+      position: {
+        x: questionNode.position.x + (isYesPath ? 150 : -150),
+        y: questionNode.position.y + 150
+      }
     };
 
-    setNodes(prev => {
-      const updatedNodes = [...prev, newNode];
-      saveToHistory({
-        nodes: updatedNodes,
-        selectedNode: newNode,
-        buildStep
-      });
-      return updatedNodes;
-    });
-
-    setSelectedNode(newNode);
+    setNodes(prev => [
+      ...prev,
+      newAnswer,
+      ...prev.map(node => 
+        node.id === questionNodeId
+          ? { ...node, [isYesPath ? 'yesNodeId' : 'noNodeId']: newAnswer.id }
+          : node
+      )
+    ]);
     
+    setSelectedNode(newAnswer);
+    setShowNodeEditor(true);
     toast({
-      title: `${type === 'question' ? '🤔' : '🎯'} New ${type} added!`,
-      description: "Click to edit its content"
+      title: isYesPath ? "👍 Add Yes Answer" : "👎 Add No Answer",
+      description: `What happens if the answer is "${isYesPath ? 'Yes' : 'No'}"?`,
     });
-  }, [buildStep, saveToHistory, toast]);
+  }, [nodes, toast]);
+
+  const handleNodeSelect = useCallback((node: TreeNode) => {
+    if (node.type === 'question') {
+      setSelectedNode(node);
+      if (!node.content) {
+        setShowNodeEditor(true);
+      }
+    } else {
+      // Prevent direct answer node selection/editing
+      toast({
+        title: "ℹ️ Answer Node",
+        description: "Answers can only be added through YES/NO buttons",
+      });
+    }
+  }, []);
 
   const validateTree = useCallback(() => {
     // Check if all question nodes have both yes and no connections
@@ -284,6 +284,32 @@ export default function BuildTree() {
     });
   }, [toast]);
 
+  // Handle adding a new node from the palette
+  const handleAddNode = useCallback((type: NodeType) => {
+    if (type === 'question') {
+      const newNode: TreeNode = {
+        id: `node-${Date.now()}`,
+        type: 'question',
+        content: '',
+        position: { x: 200, y: 200 },
+      };
+      setNodes(prev => [...prev, newNode]);
+      setSelectedNode(newNode);
+      setShowNodeEditor(true);
+      toast({
+        title: "🤔 New Question",
+        description: "Type your yes/no question",
+      });
+    } else {
+      // Prevent direct answer creation from palette
+      toast({
+        title: "❌ Cannot Add Answer Directly",
+        description: "Use YES/NO buttons on question nodes to add answers",
+        variant: "destructive"
+      });
+    }
+  }, [toast]);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 pt-24">
@@ -327,16 +353,7 @@ export default function BuildTree() {
             {/* Left sidebar */}
             <div className="md:col-span-1 space-y-4">
               <NodePalette
-                onNodeSelect={(type) => {
-                  const newNode: TreeNode = {
-                    id: `node-${Date.now()}`,
-                    question: '',
-                    position: { x: 400, y: 200 }
-                  };
-                  setNodes(prev => [...prev, newNode]);
-                  setSelectedNode(newNode);
-                  setShowNodeEditor(true);
-                }}
+                onNodeSelect={handleAddNode}
               />
 
               <ProgressTracker
@@ -364,12 +381,9 @@ export default function BuildTree() {
                 nodes={nodes}
                 selectedNode={selectedNode}
                 onNodeDrag={handleNodeDrop}
-                onNodeSelect={(node) => {
-                  setSelectedNode(node);
-                  setShowNodeEditor(true);
-                }}
+                onNodeSelect={handleNodeSelect}
                 onNodeDelete={handleNodeDelete}
-                onNodeConnect={handleNodeConnect}
+                onNodeConnect={handleYesNoClick}
                 onNodeDisconnect={handleNodeDisconnect}
               />
             </div>

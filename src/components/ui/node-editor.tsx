@@ -9,7 +9,7 @@ import { useToast } from './use-toast';
 
 interface NodeEditorProps {
   node?: TreeNode;
-  onUpdate: (id: string, content: string) => void;
+  onUpdate: (node: TreeNode) => void;
   onClose: () => void;
 }
 
@@ -29,12 +29,18 @@ export function NodeEditor({ node, onUpdate, onClose }: NodeEditorProps) {
 
   const handleSave = () => {
     const trimmedContent = content.trim();
-    if (trimmedContent && node.id) {
-      onUpdate(node.id, trimmedContent);
-      toast?.({
+    if (trimmedContent && node) {
+      const updatedNode = {
+        ...node,
+        content: trimmedContent
+      };
+      onUpdate(updatedNode);
+      
+      toast({
         title: "Success",
         description: "Node updated successfully",
       });
+      
       onClose();
     }
   };

@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from './use-toast';
 
 export function Toast() {
-  const { message, type, show } = useToast();
+  const { toast, message, type, show, dismiss } = useToast();
 
   if (!show) return null;
 
@@ -21,7 +21,8 @@ export function Toast() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
-          className={`fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50`}
+          className={`${bgColor} text-white px-6 py-3 rounded-lg shadow-lg`}
+          onClick={dismiss}
         >
           <div className="flex items-center gap-2">
             <span>{icon}</span>
