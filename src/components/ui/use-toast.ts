@@ -1,28 +1,35 @@
-import { useState, useCallback } from 'react';
+import { create } from 'zustand';
 
-interface Toast {
-  id: string;
-  title: string;
-  description?: string;
-  variant?: 'default' | 'destructive';
+type ToastType = 'success' | 'error' | 'info';
+
+interface ToastState {
+  message: string | null;
+  type: ToastType | null;
+  show: boolean;
+  showToast: (message: string, type: ToastType) => void;
+  hideToast: () => void;
 }
 
-let toastId = 0;
-
-export function useToast() {
-  const [toasts, setToasts] = useState<Toast[]>([]);
-
-  const toast = useCallback(({ title, description, variant = 'default' }: Omit<Toast, 'id'>) => {
-    const id = `toast-${toastId++}`;
-    const newToast: Toast = { id, title, description, variant };
-    
-    setToasts(prev => [...prev, newToast]);
-    
-    // Auto-remove toast after 5 seconds
+export const useToastStore = create<ToastState>()((set) => ({
+  message: null,
+  type: null,
+  show: false,
+  showToast: (message: string, type: ToastType) => {
+    set({ message, type, show: true });
     setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
-    }, 5000);
-  }, []);
+      set({ show: false, message: null, type: null });
+    }, 3000);
+  },
+  hideToast: () => set({ show: false, message: null, type: null }),
+}));
 
-  return { toasts, toast };
-}
+export const toast = {
+  success: (message: string) => useToastStore.getState().showToast(message, 'success'),
+  error: (message: string) => useToastStore.getState().showToast(message, 'error'),
+  info: (message: string) => useToastStore.getState().showToast(message, 'info'),
+};
+
+export const useToast = () => {
+  const { message, type, show } = useToastStore();
+  return { message, type, show };
+};

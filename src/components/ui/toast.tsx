@@ -1,45 +1,34 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from './use-toast';
 
-export function Toaster() {
-  const { toasts } = useToast();
+export function Toast() {
+  const { message, type, show } = useToast();
+
+  if (!show) return null;
+
+  const bgColor = type === 'success' ? 'bg-green-500' :
+                 type === 'error' ? 'bg-red-500' :
+                 'bg-blue-500';
+
+  const icon = type === 'success' ? '✅' :
+              type === 'error' ? '❌' :
+              'ℹ️';
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-      <AnimatePresence>
-        {toasts.map(toast => (
-          <motion.div
-            key={toast.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`
-              p-4 rounded-lg shadow-lg min-w-[300px] max-w-md
-              ${toast.variant === 'destructive' 
-                ? 'bg-red-600 text-white' 
-                : 'bg-white text-gray-900 border border-gray-200'
-              }
-            `}
-          >
-            <div className="flex justify-between items-start gap-2">
-              <div>
-                <h3 className="font-medium">{toast.title}</h3>
-                {toast.description && (
-                  <p className={`text-sm ${
-                    toast.variant === 'destructive' 
-                      ? 'text-red-100' 
-                      : 'text-gray-500'
-                  }`}>
-                    {toast.description}
-                  </p>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          className={`fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50`}
+        >
+          <div className="flex items-center gap-2">
+            <span>{icon}</span>
+            <span>{message}</span>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
-
-export { useToast };

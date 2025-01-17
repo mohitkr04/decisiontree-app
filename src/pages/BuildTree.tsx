@@ -140,17 +140,149 @@ export default function BuildTree() {
   }, [nodes.length, buildStep]);
 
   // Node connection and disconnection handlers
-  const handleNodeConnect = useCallback((sourceId: string, targetId: string) => {
-    // Implement the logic for connecting nodes
-    // This is a placeholder implementation
-    console.log(`Connecting node ${sourceId} to ${targetId}`);
-  }, []);
+  const handleNodeConnect = useCallback((sourceId: string, targetId: string, isYesPath: boolean) => {
+    setNodes(prev => {
+      const updatedNodes = prev.map(node => {
+        if (node.id === sourceId) {
+          // Only allow connections from question nodes to either type
+          if (node.type === 'question') {
+            return {
+              ...node,
+              [isYesPath ? 'yesConnection' : 'noConnection']: targetId
+            };
+          }
+        }
+        return node;
+      });
 
-  const handleNodeDisconnect = useCallback((sourceId: string, targetId: string) => {
-    // Implement the logic for disconnecting nodes
-    // This is a placeholder implementation
-    console.log(`Disconnecting node ${sourceId} from ${targetId}`);
-  }, []);
+      // Save to history and show feedback
+      saveToHistory({
+        nodes: updatedNodes,
+        selectedNode,
+        buildStep
+      });
+
+      toast({
+        title: "Connected! 🎉",
+        description: `Created a ${isYesPath ? 'Yes' : 'No'} path!`
+      });
+
+      return updatedNodes;
+    });
+  }, [selectedNode, buildStep, saveToHistory, toast]);
+
+  const handleNodeAdd = useCallback((type: 'question' | 'answer', position: { x: number; y: number }) => {
+    const newNode: TreeNode = {
+      id: `node-${Date.now()}`,
+      type,
+      content: type === 'question' ? 'New Question?' : 'Answer',
+      position,
+    };
+
+    setNodes(prev => {
+      const updatedNodes = [...prev, newNode];
+      saveToHistory({
+        nodes: updatedNodes,
+        selectedNode: newNode,
+        buildStep
+      });
+      return updatedNodes;
+    });
+
+    setSelectedNode(newNode);
+    
+    toast({
+      title: `${type === 'question' ? '🤔' : '🎯'} New ${type} added!`,
+      description: "Click to edit its content"
+    });
+  }, [buildStep, saveToHistory, toast]);
+
+  const validateTree = useCallback(() => {
+    // Check if all question nodes have both yes and no connections
+    const invalidNodes = nodes.filter(node => 
+      node.type === 'question' && (!node.yesConnection || !node.noConnection)
+    );
+
+    if (invalidNodes.length > 0) {
+      toast({
+        title: "Oops! 🤔",
+        description: "Some questions don't have both Yes and No paths!",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    // Check if there are no circular references
+    const visited = new Set<string>();
+    const checkCircular = (nodeId: string): boolean => {
+      if (visited.has(nodeId)) return true;
+      visited.add(nodeId);
+      
+      const node = nodes.find(n => n.id === nodeId);
+      if (!node) return false;
+
+      if (node.yesConnection && checkCircular(node.yesConnection)) return true;
+      if (node.noConnection && checkCircular(node.noConnection)) return true;
+
+      visited.delete(nodeId);
+      return false;
+    };
+
+    const hasCircular = nodes.some(node => checkCircular(node.id));
+    if (hasCircular) {
+      toast({
+        title: "Oops! 🔄",
+        description: "Found a loop in the decision tree!",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    return true;
+  }, [nodes, toast]);
+
+  const handleNodeEdit = useCallback((nodeId: string, content: string) => {
+    setNodes(prev => {
+      const updatedNodes = prev.map(node =>
+        node.id === nodeId ? { ...node, content } : node
+      );
+      saveToHistory({
+        nodes: updatedNodes,
+        selectedNode,
+        buildStep
+      });
+      return updatedNodes;
+    });
+
+    toast({
+      title: "Updated! ✏️",
+      description: "Your changes have been saved"
+    });
+  }, [selectedNode, buildStep, saveToHistory, toast]);
+
+  const handleNodeDisconnect = useCallback((sourceId: string, isYesPath: boolean) => {
+    setNodes(prev => {
+      const updatedNodes = prev.map(node => {
+        if (node.id === sourceId) {
+          const newNode = { ...node };
+          if (isYesPath) {
+            delete newNode.yesConnection;
+          } else {
+            delete newNode.noConnection;
+          }
+          return newNode;
+        }
+        return node;
+      });
+
+      toast?.({
+        title: "Connection removed",
+        description: `Removed ${isYesPath ? 'Yes' : 'No'} connection`,
+      });
+
+      return updatedNodes;
+    });
+  }, [toast]);
 
   return (
     <div className="min-h-screen bg-background">
