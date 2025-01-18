@@ -1,4 +1,6 @@
 export interface TreeNode {
+  hint: any;
+  question: string;
   id: string;
   type: 'question' | 'answer';
   content: string;

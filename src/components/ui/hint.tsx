@@ -7,7 +7,7 @@ interface HintProps {
   onClose: () => void;
 }
 
-export function Hint({ text, visible }: HintProps) {
+export function Hint({ text, visible }: Omit<HintProps, 'onClose'>) {
   return (
     <AnimatePresence>
       {visible && (

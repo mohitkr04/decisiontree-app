@@ -7,7 +7,7 @@ interface FeedbackProps {
   onClose: () => void;
 }
 
-export function Feedback({ message, type }: FeedbackProps) {
+export function Feedback({ message, type }: Omit<FeedbackProps, 'visible' | 'onClose'>) {
   const icons = {
     success: '🌟',
     info: '💡',

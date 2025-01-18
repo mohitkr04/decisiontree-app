@@ -10,7 +10,7 @@ interface PeerReviewProps {
   studentName: string;
 }
 
-export default function PeerReview({ studentName }: PeerReviewProps) {
+export default function PeerReview({ studentName }: Omit<PeerReviewProps, 'treeData'>) {
   const { toast } = useToast();
   const [feedback, setFeedback] = useState('');
   const [rating, setRating] = useState(0);

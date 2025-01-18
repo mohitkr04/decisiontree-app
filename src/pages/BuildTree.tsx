@@ -27,7 +27,7 @@ export default function BuildTree() {
   const [showNodeEditor, setShowNodeEditor] = useState(false);
   const [buildStep, setBuildStep] = useState(1);
   const [showTutorial, setShowTutorial] = useState(true);
-  const [showHint, setShowHint] = useState(false);
+  const [showHint, _setShowHint] = useState(false);
   const [hintText, setHintText] = useState('');
   const [history, setHistory] = useState<HistoryState[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -323,10 +323,9 @@ export default function BuildTree() {
           )}
 
           {showHint && (
-            <Hint
+            <Hint 
               text={hintText}
               visible={showHint}
-              onClose={() => setShowHint(false)}
             />
           )}
 
@@ -338,8 +337,6 @@ export default function BuildTree() {
               buildStep === 3 ? "Add result nodes" :
               "Complete!"
             }`}
-            visible={true}
-            onClose={() => {}}
           />
         </motion.div>
       </div>

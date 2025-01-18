@@ -480,7 +480,7 @@ export default function QuizGame() {
   const [showExplanation, setShowExplanation] = useState(false);
   const [questionStartTime, setQuestionStartTime] = useState<number | null>(null);
   const [answers, setAnswers] = useState<boolean[]>([]);
-  const [timeTaken, setTimeTaken] = useState<number[]>([]);
+  const [_timeTaken, setTimeTaken] = useState<number[]>([]);
   const { toast } = useToast();
 
   const formatTime = (ms: number) => {
@@ -502,7 +502,7 @@ export default function QuizGame() {
     
     if (questionStartTime) {
       const questionTime = Date.now() - questionStartTime;
-      setTimeTaken(prev => [...prev, questionTime]);
+      setTimeTaken((prev: number[]) => [...prev, questionTime]);
     }
     
     if (correct) {

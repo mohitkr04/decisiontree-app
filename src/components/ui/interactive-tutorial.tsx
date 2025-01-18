@@ -2,6 +2,11 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './button';
 
+interface TutorialStep {
+  title: string;
+  content: string;
+  animation: 'wave' | 'drag' | 'connect' | 'complete';
+}
 
 interface InteractiveTutorialProps {
   onClose: () => void;
@@ -11,7 +16,7 @@ export function InteractiveTutorial({ onClose }: InteractiveTutorialProps) {
   const [step, setStep] = useState(1);
   const totalSteps = 4;
 
-  const steps = [
+  const steps: TutorialStep[] = [
     {
       title: "Welcome to Decision Tree Builder! 🌟",
       content: "Let's learn how to make awesome decision trees together!",

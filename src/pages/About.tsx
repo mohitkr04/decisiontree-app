@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import AppBar from '../components/layout/AppBar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 
 const features = [
   {
