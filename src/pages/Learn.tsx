@@ -120,29 +120,29 @@ export default function Learn() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50">
       <AppBar />
       
-      <div className="container mx-auto px-4 pt-24">
+      <div className="container mx-auto px-6 sm:px-8 pt-24 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
                 Learning Journey 🎓
               </h1>
-              <p className="text-muted-foreground mt-2">Master decision trees step by step</p>
+              <p className="text-muted-foreground mt-2 text-lg">Master decision trees step by step</p>
             </div>
             <Button 
               variant="outline"
               onClick={() => navigate('/examples')}
-              className="hover:bg-purple-100"
+              className="hover:bg-purple-100 px-6 py-2"
             >
               View Examples
             </Button>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-lg">
+          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-8 shadow-md">
             <div className="flex flex-col gap-6">
               {/* Level Selection Buttons */}
               <div className="flex gap-4 mb-4">
@@ -151,9 +151,9 @@ export default function Learn() {
                     key={level.id}
                     variant={activeLevel === level.level ? "default" : "outline"}
                     onClick={() => setActiveLevel(level.level)}
-                    className={`flex-1 py-6 text-lg font-semibold transition-all ${
+                    className={`py-2.5 px-6 text-base font-medium transition-all ${
                       activeLevel === level.level 
-                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-sm'
                         : 'hover:bg-purple-50'
                     }`}
                   >
@@ -170,95 +170,52 @@ export default function Learn() {
               <Separator className="my-4" />
 
               {/* Content Section */}
-              <div className="space-y-8">
+              <div className="grid gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {learningLevels
                   .find(level => level.level === activeLevel)
                   ?.sections.map((section) => (
-                    <Card key={section.id} className="overflow-hidden bg-white">
-                      <div className="p-6 space-y-6">
+                    <Card key={section.id} className="overflow-hidden bg-white hover:shadow-lg transition-shadow">
+                      <div className="p-6 space-y-5">
                         {/* Section Header */}
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="text-2xl font-semibold">{section.title}</h3>
-                            <p className="text-muted-foreground mt-2">{section.description}</p>
-                          </div>
-                          <span className="text-sm bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
-                            {section.duration}
-                          </span>
+                        <div>
+                          <h3 className="text-xl font-semibold">{section.title}</h3>
+                          <p className="text-base text-muted-foreground mt-2">{section.description}</p>
                         </div>
 
-                        {/* Content Items */}
-                        <div className="space-y-6">
+                        {/* Content Preview */}
+                        <div className="space-y-4">
                           {section.content.map((item, index) => (
-                            <div key={index} className="rounded-lg">
-                              {item.type === 'video' && (
-                                <div className="space-y-4">
-                                  <h4 className="text-lg font-medium">{item.title}</h4>
-                                  <div className="aspect-video rounded-lg overflow-hidden border-2 border-purple-100">
-                                    <iframe
-                                      className="w-full h-full"
-                                      src={item.url}
-                                      title={item.title}
-                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                      allowFullScreen={true}
-                                    />
-                                  </div>
+                            <div key={index} className="rounded-lg overflow-hidden">
+                              {item.type === "video" ? (
+                                <div className="aspect-video w-full">
+                                  <iframe
+                                    src={item.url}
+                                    className="w-full h-full"
+                                    allowFullScreen
+                                  />
                                 </div>
-                              )}
-                              {item.type === 'text' && (
-                                <div className="prose prose-purple max-w-none bg-purple-50/50 rounded-lg p-6">
-                                  <h4 className="text-lg font-medium mb-3">{item.title}</h4>
-                                  <p className="text-gray-700 whitespace-pre-line">{item.content}</p>
+                              ) : (
+                                <div className="text-base text-gray-600 bg-gray-50 p-4 rounded-lg">
+                                  {item.content}
                                 </div>
                               )}
                             </div>
                           ))}
                         </div>
 
-                        {/* Progress Section */}
-                        <div className="space-y-3">
-                          <div className="flex justify-between text-sm">
-                            <span className="font-medium">Progress</span>
-                            <span className="text-purple-600">{section.progress}%</span>
-                          </div>
-                          <Progress 
-                            value={section.progress} 
-                            className="h-2 bg-purple-100" 
-                          />
+                        {/* Footer */}
+                        <div className="flex items-center justify-between text-base pt-2">
+                          <span className="text-muted-foreground">
+                            ⏱️ {section.duration}
+                          </span>
+                          <Progress value={section.progress} className="w-24" />
                         </div>
-
-                        {/* Action Button */}
-                        <Button 
-                          className={`w-full py-6 text-lg ${
-                            section.status === 'locked' 
-                              ? 'bg-gray-100 text-gray-500' 
-                              : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
-                          }`}
-                          disabled={section.status === 'locked'}
-                        >
-                          {section.status === 'locked' 
-                            ? '🔒 Complete previous sections first' 
-                            : '▶️ Start Learning'}
-                        </Button>
                       </div>
                     </Card>
                   ))}
               </div>
             </div>
           </div>
-
-          {/* Overall Progress Card */}
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-lg font-medium">Overall Progress</span>
-                <span className="text-sm text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-                  0/5 Sections Completed
-                </span>
-              </div>
-              <Progress value={0} className="h-3 bg-purple-100" />
-            </div>
-          </Card>
         </motion.div>
       </div>
     </div>
