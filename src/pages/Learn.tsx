@@ -120,38 +120,41 @@ export default function Learn() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50">
       <AppBar />
       
-      <div className="container mx-auto px-6 sm:px-8 pt-24 pb-16">
+      <div className="container mx-auto px-4 sm:px-6 pt-20 sm:pt-24 pb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-8"
+          className="space-y-6 sm:space-y-8"
         >
-          <div className="flex justify-between items-center mb-8">
+          {/* Header Section - Updated text sizes */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">
                 Learning Journey 🎓
               </h1>
-              <p className="text-muted-foreground mt-2 text-lg">Master decision trees step by step</p>
+              <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground mt-2 font-medium">
+                Master decision trees step by step
+              </p>
             </div>
             <Button 
               variant="outline"
               onClick={() => navigate('/examples')}
-              className="hover:bg-purple-100 px-6 py-2"
+              className="w-full sm:w-auto hover:bg-purple-100 text-base sm:text-lg"
             >
               View Examples
             </Button>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-8 shadow-md">
-            <div className="flex flex-col gap-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 sm:p-6 lg:p-8 shadow-md">
+            <div className="flex flex-col gap-4 sm:gap-6">
               {/* Level Selection Buttons */}
-              <div className="flex gap-4 mb-4">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {learningLevels.map((level) => (
                   <Button
                     key={level.id}
                     variant={activeLevel === level.level ? "default" : "outline"}
                     onClick={() => setActiveLevel(level.level)}
-                    className={`py-2.5 px-6 text-base font-medium transition-all ${
+                    className={`py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all ${
                       activeLevel === level.level 
                         ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-sm'
                         : 'hover:bg-purple-50'
@@ -159,7 +162,7 @@ export default function Learn() {
                   >
                     {level.level}
                     {level.level !== "Introduction" && (
-                      <span className="ml-2 text-sm opacity-70">
+                      <span className="ml-1 text-xs opacity-70">
                         {level.level === "Intermediate" ? "🔒" : ""}
                       </span>
                     )}
@@ -167,25 +170,35 @@ export default function Learn() {
                 ))}
               </div>
 
-              <Separator className="my-4" />
+              <Separator className="my-2 sm:my-4" />
 
               {/* Content Section */}
-              <div className="grid gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {learningLevels
                   .find(level => level.level === activeLevel)
                   ?.sections.map((section) => (
-                    <Card key={section.id} className="overflow-hidden bg-white hover:shadow-lg transition-shadow">
-                      <div className="p-6 space-y-5">
+                    <Card 
+                      key={section.id} 
+                      className="overflow-hidden bg-white hover:shadow-md transition-shadow"
+                    >
+                      <div className="p-4 sm:p-5 space-y-3 sm:space-y-4">
                         {/* Section Header */}
                         <div>
-                          <h3 className="text-xl font-semibold">{section.title}</h3>
-                          <p className="text-base text-muted-foreground mt-2">{section.description}</p>
+                          <h3 className="text-base sm:text-lg font-semibold">
+                            {section.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {section.description}
+                          </p>
                         </div>
 
                         {/* Content Preview */}
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                           {section.content.map((item, index) => (
-                            <div key={index} className="rounded-lg overflow-hidden">
+                            <div 
+                              key={index} 
+                              className="rounded-md overflow-hidden"
+                            >
                               {item.type === "video" ? (
                                 <div className="aspect-video w-full">
                                   <iframe
@@ -195,7 +208,7 @@ export default function Learn() {
                                   />
                                 </div>
                               ) : (
-                                <div className="text-base text-gray-600 bg-gray-50 p-4 rounded-lg">
+                                <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
                                   {item.content}
                                 </div>
                               )}
@@ -204,11 +217,11 @@ export default function Learn() {
                         </div>
 
                         {/* Footer */}
-                        <div className="flex items-center justify-between text-base pt-2">
+                        <div className="flex items-center justify-between text-xs sm:text-sm pt-2">
                           <span className="text-muted-foreground">
                             ⏱️ {section.duration}
                           </span>
-                          <Progress value={section.progress} className="w-24" />
+                          <Progress value={section.progress} className="w-16 sm:w-24" />
                         </div>
                       </div>
                     </Card>
